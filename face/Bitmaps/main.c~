@@ -1,0 +1,91 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+typedef unsigned int uint;
+typedef unsigned short ushort;
+
+int* img;
+FILE *img_file;
+
+void open_bitmap()
+{
+    fseek(img_file, 4, SEEK_SET);
+
+    string magic_nb = "";
+    magic_nb += fgetc(img_file);
+    magic_nb += fgetc(img_file);
+
+    uint size = fgetc(img_file) | (fgetc(img_file) << 8)
+                | (fgetc(img_file) << 16) | (fgetc(img_file) << 24);
+
+    fseek(img_file, 4, SEEK_CUR);
+
+    uint shift = fgetc(img_file) | fgetc(img_file) << 8
+                 | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    uint dib_size = fgetc(img_file) | fgetc(img_file) << 8
+                    | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    width = fgetc(img_file) | fgetc(img_file) << 8
+             | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    uint height = fgetc(img_file) | fgetc(img_file) << 8
+                  | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    ushort color_maps = fgetc(img_file) | fgetc(img_file) << 8;
+
+    ushort bits_per_pixel = fgetc(img_file) | fgetc(img_file) << 8;
+
+    uint compression = fgetc(img_file) | fgetc(img_file) << 8
+                       | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    uint pixel_array_size = fgetc(img_file) | fgetc(img_file) << 8
+                            | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    fseek(img_file, 8, SEEK_CUR);
+
+    uint palette_colors = fgetc(img_file) | fgetc(img_file) << 8
+                          | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    uint important_colors = fgetc(img_file) | fgetc(img_file) << 8
+                            | fgetc(img_file) << 16 | fgetc(img_file) << 24;
+
+    printf("BMP header :\n"
+           + "  magic nb : " + magic_nb + '\n'
+           + "  image size : \o" + B_to_MiB(size) + " MiB\n"
+           + "  shift : \o" + shift + '\n'
+           + "\nDIB header :\n" + "  DIB header size : \o" + dib_size + " B\n"
+           + "  width : \o" + width_ + '\n'
+           + "  height : \o" + height + '\n'
+           + "  color maps used : \o" + color_maps + '\n'DEBUG
+           + "  bits per pixel : \o" + bits_per_pixel + '\n'
+           + "  compression : \o" + compression + '\n'
+           + "  pixel array size : \o" + B_to_MiB(pixel_array_size) + "MiB" + '\n'
+           + "  palette colors : \o" + palette_colors + '\n'
+           + "  important colors : \o" + important_colors + '\n',
+           magic_nb,
+           0 DEBUG,
+           shift,
+           dib_size,
+           width,
+           height,
+           color_maps,
+           bits_per_pixel,
+           compression,
+           0 DEBUG,
+           palette_colors,
+           important_colors);
+
+}// void print_header
+
+
+int main(int argc, char *argv[])
+{
+    img_file = fopen(*argv, "r");
+    //open_bitmap();
+    printf("%X\n", fgetc(img_file));
+    fclose(img_file);
+
+    return 0;
+}// int main
